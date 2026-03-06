@@ -1,0 +1,210 @@
+<!DOCTYPE html><html>
+<head><meta name="viewport" content="width=device-width, initial-scale=1"><title>My Online Shop</title><script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><script>
+(function(){
+emailjs.init("YOUR_PUBLIC_KEY");
+})();
+</script><style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+header{
+background:#111;
+color:white;
+padding:20px;
+text-align:center;
+font-size:24px;
+}
+
+.search{
+text-align:center;
+margin:20px;
+}
+
+.search input{
+padding:10px;
+width:250px;
+}
+
+.products{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
+padding:20px;
+}
+
+.product{
+background:white;
+padding:15px;
+width:220px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.product img{
+width:100%;
+border-radius:8px;
+}
+
+button{
+background:#111;
+color:white;
+border:none;
+padding:10px 15px;
+margin-top:10px;
+cursor:pointer;
+border-radius:6px;
+}
+
+#cart{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:10px;
+}
+
+#cartItems li{
+margin:5px 0;
+}
+
+input{
+display:block;
+margin:10px auto;
+padding:10px;
+width:250px;
+}
+
+.whatsapp{
+background:#25D366;
+}
+
+</style></head><body><header>My Online Shop</header><div class="search">
+<input id="searchBox" placeholder="Search products..." onkeyup="searchProduct()">
+</div><div class="products" id="productList"><div class="product">
+<img src="https://i.ibb.co/1YgjfgMw/1771944862545.png">
+<h3>Product 1</h3>
+<p>₹299</p>
+<button onclick="addToCart('Product 1',299)">Add to Cart</button>
+</div><div class="product">
+<img src="https://i.ibb.co/TMV4mgPL/1771944859279.png">
+<h3>Product 2</h3>
+<p>₹399</p>
+<button onclick="addToCart('Product 2',399)">Add to Cart</button>
+</div></div><div id="cart"><h2>Your Cart (<span id="cartCount">0</span>)</h2><ul id="cartItems"></ul><h3>Total ₹<span id="total">0</span></h3><h2>Customer Details</h2><input id="name" placeholder="Your Name">
+<input id="phone" placeholder="Phone Number">
+<input id="address" placeholder="Delivery Address"><button onclick="placeOrder()">Send Order</button>
+
+<button class="whatsapp" onclick="whatsappOrder()">Order via WhatsApp</button>
+
+</div><script>
+
+let cart=[];
+let total=0;
+
+function addToCart(name,price){
+
+cart.push({name:name,price:price});
+
+total+=price;
+
+updateCart();
+
+}
+
+function updateCart(){
+
+let list=document.getElementById("cartItems");
+
+list.innerHTML="";
+
+cart.forEach(item=>{
+
+let li=document.createElement("li");
+
+li.innerText=item.name+" - ₹"+item.price;
+
+list.appendChild(li);
+
+});
+
+document.getElementById("total").innerText=total;
+
+document.getElementById("cartCount").innerText=cart.length;
+
+}
+
+function placeOrder(){
+
+let name=document.getElementById("name").value;
+
+let phone=document.getElementById("phone").value;
+
+let address=document.getElementById("address").value;
+
+let products=cart.map(p=>p.name+" ₹"+p.price).join(",");
+
+let params={
+
+customer_name:name,
+phone:phone,
+address:address,
+products:products,
+total:total
+
+};
+
+emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",params)
+
+.then(function(){
+
+alert("Order sent successfully");
+
+cart=[];
+total=0;
+
+updateCart();
+
+});
+
+}
+
+function whatsappOrder(){
+
+let products=cart.map(p=>p.name+" ₹"+p.price).join(",");
+
+let message="New Order%0AProducts:"+products+"%0ATotal: ₹"+total;
+
+window.open("https://wa.me/?text="+message);
+
+}
+
+function searchProduct(){
+
+let input=document.getElementById("searchBox").value.toLowerCase();
+
+let products=document.querySelectorAll(".product");
+
+products.forEach(p=>{
+
+let name=p.innerText.toLowerCase();
+
+if(name.includes(input)){
+
+p.style.display="block";
+
+}else{
+
+p.style.display="none";
+
+}
+
+});
+
+}
+
+</script></body></html>
